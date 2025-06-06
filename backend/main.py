@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from datetime import datetime
 
 import models
@@ -15,7 +16,6 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Currency API", version="1.0.0")
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -27,14 +27,16 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-def load_initial_currency_data():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     db = Session()
     try:
         currencies = services.fetch_currencies()
         save_currencies(db, currencies)
     finally:
         db.close()
+
+    yield
 
 
 @app.get("/currencies")
