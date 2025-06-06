@@ -1,0 +1,73 @@
+
+<form [formGroup]="dateRangeForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Zakres dat</mat-label>
+    <mat-date-range-input [rangePicker]="picker" formGroupName="range">
+      <input matStartDate formControlName="start" placeholder="Data od" />
+      <input matEndDate formControlName="end" placeholder="Data do" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="fetchCurrenciesRange()">
+    Pobierz kursy
+  </button>
+</form>
+<div class="filters">
+  <mat-form-field appearance="fill">
+    <mat-label>Rok</mat-label>
+    <mat-select [(value)]="selectedYear" (selectionChange)="applyFilters()">
+      <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Kwartal</mat-label>
+    <mat-select [(value)]="selectedQuarter" (selectionChange)="applyFilters()">
+      <mat-option *ngFor="let q of quarters" [value]="q">{{ q }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Miesiąc</mat-label>
+    <mat-select [(value)]="selectedMonth" (selectionChange)="applyFilters()">
+      <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Dzień</mat-label>
+    <mat-select [(value)]="selectedDay" (selectionChange)="applyFilters()">
+      <mat-option *ngFor="let d of days" [value]="d">{{ d }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-button color="warn" (click)="resetFilters()">Wyczyść filtry</button>
+</div>
+
+<mat-table [dataSource]="filteredCurrencies" class="mat-elevation-z8">
+  <ng-container matColumnDef="code">
+    <mat-header-cell *matHeaderCellDef>Kod</mat-header-cell>
+    <mat-cell *matCellDef="let el">{{ el.code }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef>Waluta</mat-header-cell>
+    <mat-cell *matCellDef="let el">{{ el.name }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="mid">
+    <mat-header-cell *matHeaderCellDef>Kurs</mat-header-cell>
+    <mat-cell *matCellDef="let el">{{ el.mid }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="date">
+    <mat-header-cell *matHeaderCellDef>Data</mat-header-cell>
+    <mat-cell *matCellDef="let el">{{ el.date }}</mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+

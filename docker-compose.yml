@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+    command: python backend/main.py
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://root:root@db:5432/currencies
+    depends_on:
+      - db
+    networks:
+      - currency-network
+
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - currency-network
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: currencies
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - currency-network
+
+volumes:
+  pgdata:
+
+networks:
+  currency-network:
