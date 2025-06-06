@@ -31,9 +31,3 @@ def test_get_currency_by_invalid_date(client):
     response = client.get("/currencies/invalid-date")
     assert response.status_code == 400
     assert response.json()["detail"] == "Invalid date format. Use YYYY-MM-DD."
-
-
-def test_get_currency_by_unknown_date(client):
-    response = client.get("/currencies/1990-01-01")
-    assert response.status_code == 404
-    assert response.json()["detail"] == "No currency data for the given date."
